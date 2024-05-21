@@ -3,6 +3,7 @@ package com.springminiprj1.controller.board;
 import com.springminiprj1.domain.board.Board;
 import com.springminiprj1.service.board.BoardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +16,12 @@ public class BoardController {
     private final BoardService service;
 
     @PostMapping("add")
-    public void add(@RequestBody Board board) {
-        service.add(board);
+    public ResponseEntity add(@RequestBody Board board) {
+        if (service.validate(board)) {
+            service.add(board);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }
