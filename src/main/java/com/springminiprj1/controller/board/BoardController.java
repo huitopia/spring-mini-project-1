@@ -34,8 +34,7 @@ public class BoardController {
         Board board = service.selectBoardById(id);
         if (board == null) {
             return ResponseEntity.notFound().build();
-        } else {
-            return ResponseEntity.ok().body(board);
         }
+        return ResponseEntity.ok().body(board);
     }
 }
