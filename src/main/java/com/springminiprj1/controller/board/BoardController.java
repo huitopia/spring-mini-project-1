@@ -19,9 +19,8 @@ public class BoardController {
         if (service.validate(board)) {
             service.add(board);
             return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.badRequest().build();
         }
+        return ResponseEntity.badRequest().build();
     }
 
     @GetMapping("list")
@@ -31,7 +30,12 @@ public class BoardController {
 
     // api/board/:id
     @GetMapping("{id}")
-    public Board get(@PathVariable Integer id) {
-        return service.selectBoardById(id);
+    public ResponseEntity get(@PathVariable Integer id) {
+        Board board = service.selectBoardById(id);
+        if (board == null) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok().body(board);
+        }
     }
 }
