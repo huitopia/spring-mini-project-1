@@ -42,4 +42,9 @@ public class BoardController {
     public void delete(@PathVariable Integer id) {
         service.deleteBoardById(id);
     }
+
+    @PutMapping("edit")
+    public void edit(@RequestBody Board board) {
+        service.updateBoard(board);
+    }
 }
