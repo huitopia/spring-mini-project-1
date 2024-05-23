@@ -65,7 +65,11 @@ public class MemberController {
             service.remove(member.getId());
             return ResponseEntity.ok().build();
         }
-
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    @PutMapping("modify")
+    public void modify(@RequestBody Member member) {
+        service.modify(member);
     }
 }

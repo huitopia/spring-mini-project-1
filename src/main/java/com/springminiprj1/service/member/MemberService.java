@@ -76,4 +76,14 @@ public class MemberService {
 
         return passwordEncoder.matches(member.getPassword(), dbMember.getPassword());
     }
+
+    public void modify(Member member) {
+        if (member.getPassword() != null && member.getPassword().length() > 0) {
+            member.setPassword(passwordEncoder.encode(member.getPassword()));
+        } else {
+            Member dbMember = mapper.selectById(member.getId());
+            member.setPassword(dbMember.getPassword());
+        }
+        mapper.update(member);
+    }
 }
