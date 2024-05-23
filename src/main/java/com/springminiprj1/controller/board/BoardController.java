@@ -4,6 +4,8 @@ import com.springminiprj1.domain.board.Board;
 import com.springminiprj1.service.board.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,9 +17,10 @@ public class BoardController {
     private final BoardService service;
 
     @PostMapping("add")
-    public ResponseEntity add(@RequestBody Board board) {
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity add(@RequestBody Board board, Authentication authentication) {
         if (service.validate(board)) {
-            service.add(board);
+            service.add(board, authentication);
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.badRequest().build();

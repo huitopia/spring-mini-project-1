@@ -26,3 +26,23 @@ CREATE TABLE member
 
 SELECT *
 FROM member;
+
+# board table 수정
+# writer column 지우기
+# member_id column references member(id)
+ALTER TABLE board
+    DROP COLUMN writer;
+
+ALTER TABLE board
+    ADD COLUMN member_id INT REFERENCES member (id) AFTER content;
+
+UPDATE board
+SET member_id = (SELECT id FROM member ORDER BY id DESC LIMIT 1)
+WHERE id > 0;
+
+# NOT NULL 제약사항 추가
+ALTER TABLE board
+    MODIFY COLUMN member_id INT NOT NULL;
+DESC board;
+SELECT *
+FROM board;
