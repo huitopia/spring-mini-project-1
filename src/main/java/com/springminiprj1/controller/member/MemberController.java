@@ -69,7 +69,12 @@ public class MemberController {
     }
 
     @PutMapping("modify")
-    public void modify(@RequestBody Member member) {
-        service.modify(member);
+    public ResponseEntity modify(@RequestBody Member member) {
+        if (service.hasAccessModify(member)) {
+            service.modify(member);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
     }
 }
