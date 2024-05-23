@@ -4,10 +4,16 @@ import com.springminiprj1.domain.member.Member;
 import com.springminiprj1.mapper.member.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtClaimsSet;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -16,6 +22,8 @@ public class MemberService {
 
     final MemberMapper mapper;
     final BCryptPasswordEncoder passwordEncoder;
+    final JwtEncoder encoder;
+    final JwtEncoder jwtEncoder;
 
     public void add(Member member) {
         member.setPassword(passwordEncoder.encode(member.getPassword()));
@@ -97,5 +105,30 @@ public class MemberService {
         }
 
         return true;
+    }
+
+    public Map<String, Object> getToken(Member member) {
+        Member dbMember = mapper.selectByEmail((member.getEmail()));
+        Map<String, Object> result = null;
+        if (dbMember != null) {
+            if (passwordEncoder.matches(member.getPassword(), dbMember.getPassword())) {
+                result = new HashMap<>();
+                String token = "";
+                // https://github.com/spring-projects/spring-security-samples/blob/main/servlet/spring-boot/java/jwt/login/src/main/java/example/web/TokenController.java
+                Instant now = Instant.now();
+                JwtClaimsSet claims = JwtClaimsSet.builder()
+                        .issuer("self")
+                        .issuedAt(now)
+                        .expiresAt(now.plusSeconds(60 * 60 * 24 * 7))
+                        .subject(member.getEmail())
+                        .claim("scope", "")
+                        .claim("nickName", dbMember.getNickName())
+                        .build();
+
+                token = jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+                result.put("token", token);
+            }
+        }
+        return result;
     }
 }
