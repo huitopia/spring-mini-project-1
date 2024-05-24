@@ -3,6 +3,7 @@ package com.springminiprj1.controller.board;
 import com.springminiprj1.domain.board.Board;
 import com.springminiprj1.service.board.BoardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -42,8 +43,13 @@ public class BoardController {
     }
 
     @DeleteMapping("{id}")
-    public void delete(@PathVariable Integer id) {
-        service.deleteBoardById(id);
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity delete(@PathVariable Integer id, Authentication authentication) {
+        if (service.hasAccess(id, authentication)) {
+            service.deleteBoardById(id);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @PutMapping("edit")
