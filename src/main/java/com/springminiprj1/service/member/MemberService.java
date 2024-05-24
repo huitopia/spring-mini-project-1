@@ -120,7 +120,7 @@ public class MemberService {
                         .issuer("self")
                         .issuedAt(now)
                         .expiresAt(now.plusSeconds(60 * 60 * 24 * 7))
-                        .subject(member.getEmail())
+                        .subject(dbMember.getId().toString())
                         .claim("scope", "")
                         .claim("nickName", dbMember.getNickName())
                         .build();
