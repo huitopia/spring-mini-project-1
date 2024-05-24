@@ -43,6 +43,22 @@ WHERE id > 0;
 # NOT NULL 제약사항 추가
 ALTER TABLE board
     MODIFY COLUMN member_id INT NOT NULL;
+
 DESC board;
+
 SELECT *
 FROM board;
+
+# 권한 테이블
+CREATE TABLE authority
+(
+    member_id INT         NOT NULL REFERENCES member (id),
+    name      VARCHAR(20) NOT NULL,
+    PRIMARY KEY (member_id, name)
+);
+
+INSERT INTO authority (member_id, name)
+VALUES (1, 'admin');
+
+SELECT *
+FROM authority;
