@@ -137,4 +137,8 @@ public class MemberService {
         }
         return result;
     }
+
+    public boolean hasAccess(Integer id, Authentication authentication) {
+        return authentication.getName().equals(id.toString());
+    }
 }
