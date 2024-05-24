@@ -81,8 +81,9 @@ public class MemberController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity modify(@RequestBody Member member, Authentication authentication) {
         if (service.hasAccessModify(member, authentication)) {
-            service.modify(member);
-            return ResponseEntity.ok().build();
+            // "token", "dfwerwe..."
+            Map<String, Object> result = service.modify(member, authentication);
+            return ResponseEntity.ok(result);
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
