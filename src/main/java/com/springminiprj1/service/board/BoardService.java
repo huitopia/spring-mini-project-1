@@ -33,7 +33,7 @@ public class BoardService {
         return true;
     }
 
-    public Map<String, Object> list(Integer page) {
+    public Map<String, Object> list(Integer page, String searchType, String searchKeyword) {
         Map pageInfo = new HashMap();
         Integer countAll = mapper.countAll();
 
@@ -41,7 +41,7 @@ public class BoardService {
         Integer lastPageNumber = (countAll - 1) / 10 + 1;
         Integer leftPageNumber = (page - 1) / 10 * 10 + 1;
         Integer rightPageNumber = leftPageNumber + 9;
-        
+
         rightPageNumber = Math.min(rightPageNumber, lastPageNumber);
 
         Integer prevPageNumber = (leftPageNumber - 1);
@@ -62,7 +62,7 @@ public class BoardService {
 
         return Map.of(
                 "pageInfo", pageInfo,
-                "boardList", mapper.selectAllPaging(offset)
+                "boardList", mapper.selectAllPaging(offset, searchType, searchKeyword)
         );
     }
 
