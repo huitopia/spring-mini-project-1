@@ -14,5 +14,5 @@ public class Board {
     private Integer memberId;
     private LocalDateTime inserted;
     private Integer numberOfImages;
-    private List<String> imageSrcList;
+    private List<BoardFile> files;
 }
