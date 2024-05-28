@@ -69,13 +69,13 @@ public class BoardController {
             Board board,
             Authentication authentication,
             @RequestParam(value = "removeFileList[]", required = false) List<String> removeFileList,
-            @RequestParam(value = "addFileList[]", required = false) List<String> addFileList
-    ) {
+            @RequestParam(value = "addFileList[]", required = false) MultipartFile[] addFileList
+    ) throws IOException {
         if (!service.hasAccess(board.getId(), authentication)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         if (service.validate(board)) {
-            service.updateBoard(board, removeFileList);
+            service.updateBoard(board, removeFileList, addFileList);
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.badRequest().build();

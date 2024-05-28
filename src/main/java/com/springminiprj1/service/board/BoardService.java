@@ -129,7 +129,7 @@ public class BoardService {
         mapper.deleteBoardById(id);
     }
 
-    public void updateBoard(Board board, List<String> removeFileList) {
+    public void updateBoard(Board board, List<String> removeFileList, MultipartFile[] addFileList) throws IOException {
         if (removeFileList != null && removeFileList.size() > 0) {
             // disk file delete
             for (String fileName : removeFileList) {
@@ -140,6 +140,26 @@ public class BoardService {
                 mapper.deleteFileByBoardIdAndName(board.getId(), fileName);
             }
         }
+
+        if (addFileList != null && addFileList.length > 0) {
+            List<String> fileNameList = mapper.selectFileNameByBoardId(board.getId());
+            for (MultipartFile file : addFileList) {
+                String fileName = file.getOriginalFilename();
+                if (!fileNameList.contains(fileName)) {
+                    // 새 파일이 기존에 없을 때만 db에 추가
+                    mapper.addFileName(board.getId(), fileName);
+                }
+                // disk 에 쓰기
+                File dir = new File(STR."/Users/hya/Desktop/Study/mini-prj-1/\{board.getId()}");
+                if (!dir.exists()) {
+                    dir.mkdirs();
+                }
+                String path = STR."/Users/hya/Desktop/Study/mini-prj-1/\{board.getId()}/\{fileName}";
+                File destination = new File(path);
+                file.transferTo(destination);
+            }
+        }
+
         mapper.updateBoard(board);
     }
 
