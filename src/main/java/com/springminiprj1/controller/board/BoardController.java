@@ -39,8 +39,6 @@ public class BoardController {
                                     @RequestParam(value = "type", required = false) String searchType,
                                     @RequestParam(value = "keyword", defaultValue = "") String searchKeyword
     ) {
-        System.out.println("searchType = " + searchType);
-        System.out.println("searchKeyword = " + searchKeyword);
         return service.list(page, searchType, searchKeyword);
     }
 

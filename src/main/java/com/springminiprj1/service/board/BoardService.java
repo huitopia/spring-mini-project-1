@@ -99,7 +99,7 @@ public class BoardService {
         List<String> fileNames = mapper.selectFileNameByBoardId(id);
         // http://172.30.1.57:8888/{id}/{name}
         List<String> imageSrcList = fileNames.stream()
-                .map(name -> STR."http://172.30.1.57:8888/\{id}/\{name}")
+                .map(name -> STR."http://127.0.0.1:8888/\{id}/\{name}")
                 .toList();
 
         board.setImageSrcList(imageSrcList);
