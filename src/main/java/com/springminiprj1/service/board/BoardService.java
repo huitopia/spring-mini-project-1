@@ -108,6 +108,23 @@ public class BoardService {
     }
 
     public void deleteBoardById(Integer id) {
+        System.out.println("id = " + id);
+        // file명 조회
+        List<String> fileNames = mapper.selectFileNameByBoardId(id);
+        // disk 파일
+        String dir = STR."/Users/hya/Desktop/Study/mini-prj-1/\{id}/";
+        for (String fileName : fileNames) {
+            File file = new File(dir + fileName);
+            file.delete();
+        }
+        File dirFile = new File(dir);
+        if (dirFile.exists()) {
+            dirFile.delete();
+        }
+        // board file
+        mapper.deleteFileByBoardId(id);
+
+        // board
         mapper.deleteBoardById(id);
     }
 
