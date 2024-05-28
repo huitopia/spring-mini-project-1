@@ -12,4 +12,5 @@ public class Board {
     private String writer; // nickName
     private Integer memberId;
     private LocalDateTime inserted;
+    private Integer numberOfImages;
 }

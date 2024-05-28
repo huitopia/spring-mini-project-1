@@ -56,20 +56,25 @@ public interface BoardMapper {
 
     @Select("""
             <script>
-            SELECT b.id, b.title, m.nick_name writer
+            SELECT b.id, 
+                   b.title,
+                   m.nick_name writer,
+                   COUNT(f.name) number_of_images
             FROM board b JOIN member m ON b.member_id = m.id
-            <trim prefix="WHERE" prefixOverrides="OR">
-                <if test="searchType != null">
-                    <bind name="pattern" value="'%' + searchKeyword + '%'" />
-                    <if test="searchType == 'all' || searchType == 'text'">
-                        OR b.title LIKE #{pattern}
-                        OR b.content LIKE #{pattern}
-                    </if>
-                    <if test="searchType == 'all' || searchType == 'nickName'">
-                        OR m.nick_name LIKE #{pattern}
-                    </if>
-                </if>
-            </trim>
+                         LEFT JOIN board_file f ON b.id = f.board_id
+               <trim prefix="WHERE" prefixOverrides="OR">
+                   <if test="searchType != null">
+                       <bind name="pattern" value="'%' + searchKeyword + '%'" />
+                       <if test="searchType == 'all' || searchType == 'text'">
+                           OR b.title LIKE #{pattern}
+                           OR b.content LIKE #{pattern}
+                       </if>
+                       <if test="searchType == 'all' || searchType == 'nickName'">
+                           OR m.nick_name LIKE #{pattern}
+                       </if>
+                   </if>
+               </trim>
+            GROUP BY b.id
             ORDER BY b.id DESC
             LIMIT #{offset}, 10
             </script>
