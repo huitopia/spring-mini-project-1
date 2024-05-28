@@ -23,15 +23,9 @@ public class BoardController {
     public ResponseEntity add(Authentication authentication,
                               Board board,
                               @RequestParam(value = "files[]", required = false) MultipartFile[] files) {
-        if (files != null) {
-            System.out.println("files = " + files.length);
 
-            for (MultipartFile file : files) {
-                System.out.println("file.getOriginalFilename() = " + file.getOriginalFilename());
-            }
-        }
         if (service.validate(board)) {
-            service.add(board, authentication);
+            service.add(board, files, authentication);
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.badRequest().build();
