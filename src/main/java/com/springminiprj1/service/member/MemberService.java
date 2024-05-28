@@ -1,9 +1,11 @@
 package com.springminiprj1.service.member;
 
 
+import com.springminiprj1.domain.board.Board;
 import com.springminiprj1.domain.member.Member;
 import com.springminiprj1.mapper.board.BoardMapper;
 import com.springminiprj1.mapper.member.MemberMapper;
+import com.springminiprj1.service.board.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,6 +32,7 @@ public class MemberService {
     final JwtEncoder encoder;
     final JwtEncoder jwtEncoder;
     private final BoardMapper boardMapper;
+    private final BoardService boardService;
 
     public void add(Member member) {
         member.setPassword(passwordEncoder.encode(member.getPassword()));
@@ -78,7 +81,12 @@ public class MemberService {
     }
 
     public void remove(Integer id) {
-        boardMapper.deleteByMemberId(id);
+        // 회원이 작성한 게시물 조회
+        List<Board> boardList = boardMapper.selectByMemberId(id);
+        // 각 게시물 지우기
+        boardList.forEach(board -> boardService.deleteBoardById(board.getId()));
+
+        // member 테이블에서 지우기
         mapper.deleteById(id);
     }
 
@@ -108,7 +116,7 @@ public class MemberService {
         JwtClaimsSet.Builder jwtClaimsSetBuilder = JwtClaimsSet.builder();
         claims.forEach(jwtClaimsSetBuilder::claim);
         jwtClaimsSetBuilder.claim("nickName", member.getNickName());
-        
+
         JwtClaimsSet jwtClaimsSet = jwtClaimsSetBuilder.build();
 
         token = jwtEncoder.encode(JwtEncoderParameters.from(jwtClaimsSet)).getTokenValue();
