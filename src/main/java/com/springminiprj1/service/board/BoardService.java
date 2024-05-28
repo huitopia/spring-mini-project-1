@@ -38,13 +38,13 @@ public class BoardService {
 
                 // 실제 파일 저장
                 // 부모 디렉토리 만들기
-                String dir = STR."/Users/hya/IdeaProjects/spring-mini-prj-1/src/main/resources/templates/\{board.getId()}";
+                String dir = STR."/Users/hya/Desktop/Study/mini-prj-1/\{board.getId()}";
                 File dirFile = new File(dir);
                 if (!dirFile.exists()) {
                     dirFile.mkdirs();
                 }
                 // 파일 경로
-                String path = STR."/Users/hya/IdeaProjects/spring-mini-prj-1/src/main/resources/templates/\{board.getId()}/\{file.getOriginalFilename()}";
+                String path = STR."/Users/hya/Desktop/Study/mini-prj-1/\{board.getId()}/\{file.getOriginalFilename()}";
                 File destination = new File(path);
                 file.transferTo(destination);
             }
