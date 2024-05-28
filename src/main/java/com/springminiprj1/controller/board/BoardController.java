@@ -73,7 +73,7 @@ public class BoardController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         if (service.validate(board)) {
-            service.updateBoard(board);
+            service.updateBoard(board, removeFileList);
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.badRequest().build();

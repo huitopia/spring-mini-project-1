@@ -116,3 +116,6 @@ CREATE TABLE board_file
 
 SELECT *
 FROM board_file;
+
+SELECT *
+FROM board_file;

@@ -129,7 +129,17 @@ public class BoardService {
         mapper.deleteBoardById(id);
     }
 
-    public void updateBoard(Board board) {
+    public void updateBoard(Board board, List<String> removeFileList) {
+        if (removeFileList != null && removeFileList.size() > 0) {
+            // disk file delete
+            for (String fileName : removeFileList) {
+                String path = STR."/Users/hya/Desktop/Study/mini-prj-1/\{board.getId()}/\{fileName}";
+                File file = new File(path);
+                file.delete();
+                // db file records delete
+                mapper.deleteFileByBoardIdAndName(board.getId(), fileName);
+            }
+        }
         mapper.updateBoard(board);
     }
 
