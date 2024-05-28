@@ -103,7 +103,7 @@ public class BoardService {
                 .map(name -> new BoardFile(name, STR."http://127.0.0.1:8888/\{id}/\{name}"))
                 .toList();
 
-        board.setFiles(files);
+        board.setFileList(files);
 
         return board;
     }
