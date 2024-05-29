@@ -16,7 +16,6 @@ import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -34,9 +33,6 @@ public class BoardService {
     String bucketName;
     @Value("${image.src.prefix}")
     String imageSrcPrefix;
-
-    // s3Client.putObject
-    // s3Client.deleteObject
 
     public void add(
             Board board,
@@ -65,17 +61,17 @@ public class BoardService {
                                 file.getInputStream(), file.getSize())
                 );
 
-                // dist 파일 저장
-//                // 부모 디렉토리 만들기
-//                String dir = STR."/Users/hya/Desktop/Study/mini-prj-1/\{board.getId()}";
-//                File dirFile = new File(dir);
-//                if (!dirFile.exists()) {
-//                    dirFile.mkdirs();
-//                }
-//                // 파일 경로
-//                String path = STR."/Users/hya/Desktop/Study/mini-prj-1/\{board.getId()}/\{file.getOriginalFilename()}";
-//                File destination = new File(path);
-//                file.transferTo(destination);
+                /* Disk 파일 저장
+                // 부모 디렉토리 만들기
+                String dir = STR."/Users/hya/Desktop/Study/mini-prj-1/\{board.getId()}";
+                File dirFile = new File(dir);
+                if (!dirFile.exists()) {
+                    dirFile.mkdirs();
+                }
+                // 파일 경로
+                String path = STR."/Users/hya/Desktop/Study/mini-prj-1/\{board.getId()}/\{file.getOriginalFilename()}";
+                File destination = new File(path);
+                file.transferTo(destination); */
             }
         }
     }
@@ -127,8 +123,8 @@ public class BoardService {
         Board board = mapper.selectBoardById(id);
         List<String> fileNames = mapper.selectFileNameByBoardId(id);
         List<BoardFile> files = fileNames.stream()
-                //-- Disk
-                // .map(name -> new BoardFile(name, STR."http://127.0.0.1:8888/\{id}/\{name}"))
+                /*-- Disk
+                .map(name -> new BoardFile(name, STR."http://127.0.0.1:8888/\{id}/\{name}")) */
                 //-- S3
                 .map(name -> new BoardFile(name, STR."\{imageSrcPrefix}/board/\{id}/\{name}"))
                 .toList();
@@ -152,19 +148,15 @@ public class BoardService {
             s3Client.deleteObject(objectRequest);
         }
 
-        // Disk 파일
-        /*
+        /* Disk 파일
         String dir = STR."/Users/hya/Desktop/Study/mini-prj-1/\{id}/";
         for (String fileName : fileNames) {
             File file = new File(dir + fileName);
             file.delete();
         }
         File dirFile = new File(dir);
-        if (dirFile.exists()) {
-            dirFile.delete();
-        }
-        */
-        
+        if (dirFile.exists()) { dirFile.delete(); } */
+
         // board file
         mapper.deleteFileByBoardId(id);
 
@@ -174,11 +166,20 @@ public class BoardService {
 
     public void updateBoard(Board board, List<String> removeFileList, MultipartFile[] addFileList) throws IOException {
         if (removeFileList != null && removeFileList.size() > 0) {
-            // disk file delete
             for (String fileName : removeFileList) {
+                // S3 File Delete
+                String key = STR."prj-1/board/\{board.getId()}/\{fileName}";
+                DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(key)
+                        .build();
+                s3Client.deleteObject(objectRequest);
+
+                /* disk file delete
                 String path = STR."/Users/hya/Desktop/Study/mini-prj-1/\{board.getId()}/\{fileName}";
                 File file = new File(path);
-                file.delete();
+                file.delete(); */
+
                 // db file records delete
                 mapper.deleteFileByBoardIdAndName(board.getId(), fileName);
             }
@@ -192,14 +193,26 @@ public class BoardService {
                     // 새 파일이 기존에 없을 때만 db에 추가
                     mapper.addFileName(board.getId(), fileName);
                 }
-                // disk 에 쓰기
+                // S3 덮어쓰기
+                String key = STR."prj-1/board/\{board.getId()}/\{file.getOriginalFilename()}";
+                PutObjectRequest objectRequest = PutObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(key)
+                        .acl(ObjectCannedACL.PUBLIC_READ)
+                        .build();
+
+                s3Client.putObject(objectRequest,
+                        RequestBody.fromInputStream(
+                                file.getInputStream(), file.getSize()));
+
+                /* Disk  덮어쓰기
                 File dir = new File(STR."/Users/hya/Desktop/Study/mini-prj-1/\{board.getId()}");
                 if (!dir.exists()) {
                     dir.mkdirs();
                 }
                 String path = STR."/Users/hya/Desktop/Study/mini-prj-1/\{board.getId()}/\{fileName}";
                 File destination = new File(path);
-                file.transferTo(destination);
+                file.transferTo(destination); */
             }
         }
 
