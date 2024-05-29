@@ -5,11 +5,15 @@ import com.springminiprj1.domain.board.BoardFile;
 import com.springminiprj1.mapper.board.BoardMapper;
 import com.springminiprj1.mapper.member.MemberMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +29,8 @@ public class BoardService {
     private final MemberMapper memberMapper;
     final S3Client s3Client;
 
+    @Value("${aws.s3.bucket.name}")
+    String bucketName;
     // s3Client.putObject
     // s3Client.deleteObject
 
@@ -42,17 +48,30 @@ public class BoardService {
                 // db에 해당 게시물의 파일 목록 저장
                 mapper.addFileName(board.getId(), file.getOriginalFilename());
 
-                // 실제 파일 저장
-                // 부모 디렉토리 만들기
-                String dir = STR."/Users/hya/Desktop/Study/mini-prj-1/\{board.getId()}";
-                File dirFile = new File(dir);
-                if (!dirFile.exists()) {
-                    dirFile.mkdirs();
-                }
-                // 파일 경로
-                String path = STR."/Users/hya/Desktop/Study/mini-prj-1/\{board.getId()}/\{file.getOriginalFilename()}";
-                File destination = new File(path);
-                file.transferTo(destination);
+                // S3 파일 저장
+                String key = STR."prj-1/board/\{board.getId()}/\{file.getOriginalFilename()}";
+                PutObjectRequest objectRequest = PutObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(key)
+                        .acl(ObjectCannedACL.PUBLIC_READ)
+                        .build();
+
+                s3Client.putObject(objectRequest,
+                        RequestBody.fromInputStream(
+                                file.getInputStream(), file.getSize())
+                );
+
+                // dist 파일 저장
+//                // 부모 디렉토리 만들기
+//                String dir = STR."/Users/hya/Desktop/Study/mini-prj-1/\{board.getId()}";
+//                File dirFile = new File(dir);
+//                if (!dirFile.exists()) {
+//                    dirFile.mkdirs();
+//                }
+//                // 파일 경로
+//                String path = STR."/Users/hya/Desktop/Study/mini-prj-1/\{board.getId()}/\{file.getOriginalFilename()}";
+//                File destination = new File(path);
+//                file.transferTo(destination);
             }
         }
     }
