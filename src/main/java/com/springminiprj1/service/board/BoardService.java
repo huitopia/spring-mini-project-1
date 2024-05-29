@@ -119,8 +119,10 @@ public class BoardService {
         );
     }
 
-    public Board selectBoardById(Integer id) {
+    public Map<String, Object> selectBoardById(Integer id, Authentication authentication) {
+        Map<String, Object> result = new HashMap<>();
         Board board = mapper.selectBoardById(id);
+
         List<String> fileNames = mapper.selectFileNameByBoardId(id);
         List<BoardFile> files = fileNames.stream()
                 /*-- Disk
@@ -128,10 +130,20 @@ public class BoardService {
                 //-- S3
                 .map(name -> new BoardFile(name, STR."\{imageSrcPrefix}/board/\{id}/\{name}"))
                 .toList();
-
         board.setFileList(files);
 
-        return board;
+        Map<String, Object> like = new HashMap<>();
+        if (authentication == null) {
+            like.put("like", false);
+        } else {
+            int c = mapper.selectLikeByBoardIdAndMemberId(id, authentication.getName());
+            like.put("like", c == 1);
+        }
+        like.put("count", mapper.selectCountLikeByBoardId(id));
+        result.put("board", board);
+        result.put("like", like);
+
+        return result;
     }
 
     public void deleteBoardById(Integer id) {
