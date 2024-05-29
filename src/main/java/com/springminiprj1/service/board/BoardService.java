@@ -135,7 +135,6 @@ public class BoardService {
     }
 
     public void deleteBoardById(Integer id) {
-        System.out.println("id = " + id);
         // file 조회
         List<String> fileNames = mapper.selectFileNameByBoardId(id);
         // S3 File
