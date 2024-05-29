@@ -153,15 +153,18 @@ public class BoardService {
         }
 
         // Disk 파일
-//        String dir = STR."/Users/hya/Desktop/Study/mini-prj-1/\{id}/";
-//        for (String fileName : fileNames) {
-//            File file = new File(dir + fileName);
-//            file.delete();
-//        }
-//        File dirFile = new File(dir);
-//        if (dirFile.exists()) {
-//            dirFile.delete();
-//        }
+        /*
+        String dir = STR."/Users/hya/Desktop/Study/mini-prj-1/\{id}/";
+        for (String fileName : fileNames) {
+            File file = new File(dir + fileName);
+            file.delete();
+        }
+        File dirFile = new File(dir);
+        if (dirFile.exists()) {
+            dirFile.delete();
+        }
+        */
+        
         // board file
         mapper.deleteFileByBoardId(id);
 
