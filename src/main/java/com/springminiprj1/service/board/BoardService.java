@@ -31,6 +31,8 @@ public class BoardService {
 
     @Value("${aws.s3.bucket.name}")
     String bucketName;
+    @Value("${image.src.prefix}")
+    String imageSrcPrefix;
     // s3Client.putObject
     // s3Client.deleteObject
 
@@ -122,10 +124,13 @@ public class BoardService {
     public Board selectBoardById(Integer id) {
         Board board = mapper.selectBoardById(id);
         List<String> fileNames = mapper.selectFileNameByBoardId(id);
-        // http://172.30.1.57:8888/{id}/{name}
         List<BoardFile> files = fileNames.stream()
-                .map(name -> new BoardFile(name, STR."http://127.0.0.1:8888/\{id}/\{name}"))
+                //-- Disk
+                // .map(name -> new BoardFile(name, STR."http://127.0.0.1:8888/\{id}/\{name}"))
+                //-- S3
+                .map(name -> new BoardFile(name, STR."\{imageSrcPrefix}/board/\{id}/\{name}"))
                 .toList();
+
 
         board.setFileList(files);
 
