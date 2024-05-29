@@ -44,11 +44,13 @@ public class AppConfiguration {
 
     @Bean
     public S3Client s3Client() {
+        // AWS 자격 증명 생성
         AwsBasicCredentials credentials = AwsBasicCredentials.create(accessKey, secretKey);
+        // 자격 증명 제공자 생성
         AwsCredentialsProvider provider = StaticCredentialsProvider.create(credentials);
         S3Client s3Client = S3Client.builder()
-                .region(Region.AP_NORTHEAST_2) // 위치
-                .credentialsProvider(provider) // 자격 증명 key
+                .region(Region.AP_NORTHEAST_2) // 위치 설정
+                .credentialsProvider(provider) // 자격 증명 제공자 설정
                 .build();
         return s3Client;
     }
