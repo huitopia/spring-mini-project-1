@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
@@ -33,6 +34,7 @@ public class BoardService {
     String bucketName;
     @Value("${image.src.prefix}")
     String imageSrcPrefix;
+
     // s3Client.putObject
     // s3Client.deleteObject
 
@@ -131,7 +133,6 @@ public class BoardService {
                 .map(name -> new BoardFile(name, STR."\{imageSrcPrefix}/board/\{id}/\{name}"))
                 .toList();
 
-
         board.setFileList(files);
 
         return board;
@@ -139,18 +140,28 @@ public class BoardService {
 
     public void deleteBoardById(Integer id) {
         System.out.println("id = " + id);
-        // file명 조회
+        // file 조회
         List<String> fileNames = mapper.selectFileNameByBoardId(id);
-        // disk 파일
-        String dir = STR."/Users/hya/Desktop/Study/mini-prj-1/\{id}/";
+        // S3 File
         for (String fileName : fileNames) {
-            File file = new File(dir + fileName);
-            file.delete();
+            String key = STR."prj-1/board/\{id}/\{fileName}";
+            DeleteObjectRequest objectRequest = DeleteObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(key)
+                    .build();
+            s3Client.deleteObject(objectRequest);
         }
-        File dirFile = new File(dir);
-        if (dirFile.exists()) {
-            dirFile.delete();
-        }
+
+        // Disk 파일
+//        String dir = STR."/Users/hya/Desktop/Study/mini-prj-1/\{id}/";
+//        for (String fileName : fileNames) {
+//            File file = new File(dir + fileName);
+//            file.delete();
+//        }
+//        File dirFile = new File(dir);
+//        if (dirFile.exists()) {
+//            dirFile.delete();
+//        }
         // board file
         mapper.deleteFileByBoardId(id);
 
