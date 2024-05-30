@@ -5,10 +5,9 @@ import com.springminiprj1.service.comment.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,7 +17,12 @@ public class CommentController {
 
     @PostMapping("add")
     @PreAuthorize("isAuthenticated()")
-    public void addComment(@RequestBody Comment comment, Authentication authentication) {
+    public void add(@RequestBody Comment comment, Authentication authentication) {
         service.add(comment, authentication);
+    }
+
+    @GetMapping("list/{boardId}")
+    public List<Comment> list(@PathVariable Integer boardId) {
+        return service.selectCommentByBoardId(boardId);
     }
 }
