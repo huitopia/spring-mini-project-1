@@ -146,7 +146,7 @@ public interface BoardMapper {
     @Delete("""
             DELETE FROM board_like
             WHERE board_id=#{boardId}
-              AND member_id=#{memberId}
+            AND member_id=#{memberId}
             """)
     int deleteLikeByBoardIdAndMemberId(Integer boardId, Integer memberId);
 
