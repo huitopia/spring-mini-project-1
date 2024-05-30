@@ -112,7 +112,7 @@ public class BoardService {
         pageInfo.put("lastPageNumber", lastPageNumber);
         pageInfo.put("leftPageNumber", leftPageNumber);
         pageInfo.put("rightPageNumber", rightPageNumber);
-
+        
         return Map.of(
                 "pageInfo", pageInfo,
                 "boardList", mapper.selectAllPaging(offset, searchType, searchKeyword)

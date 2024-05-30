@@ -15,5 +15,6 @@ public class Board {
     private LocalDateTime inserted;
     private Integer numberOfLike;
     private Integer numberOfImages;
+    private Integer numberOfComments;
     private List<BoardFile> fileList;
 }
