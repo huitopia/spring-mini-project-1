@@ -23,4 +23,17 @@ public class CommentService {
     public List<Comment> selectCommentByBoardId(Integer boardId) {
         return mapper.selectCommentByBoardId(boardId);
     }
+
+    public boolean validate(Comment comment) {
+        if (comment == null) {
+            return false;
+        }
+        if (comment.getComment().isBlank()) {
+            return false;
+        }
+        if (comment.getBoardId() == null) {
+            return false;
+        }
+        return true;
+    }
 }

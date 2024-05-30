@@ -3,6 +3,7 @@ package com.springminiprj1.controller.comment;
 import com.springminiprj1.domain.comment.Comment;
 import com.springminiprj1.service.comment.CommentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +18,13 @@ public class CommentController {
 
     @PostMapping("add")
     @PreAuthorize("isAuthenticated()")
-    public void add(@RequestBody Comment comment, Authentication authentication) {
-        service.add(comment, authentication);
+    public ResponseEntity add(@RequestBody Comment comment, Authentication authentication) {
+        if (service.validate(comment)) {
+            service.add(comment, authentication);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @GetMapping("list/{boardId}")
