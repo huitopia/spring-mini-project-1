@@ -15,7 +15,6 @@ public class CommentService {
 
     public void add(Comment comment, Authentication authentication) {
         comment.setMemberId(Integer.valueOf(authentication.getName()));
-
         mapper.insert(comment);
     }
 }

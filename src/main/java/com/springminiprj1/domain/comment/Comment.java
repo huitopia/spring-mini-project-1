@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public class Comment {
     private Integer id;
     private Integer boardId;
-    private String memberId;
+    private Integer memberId;
     private String comment;
     private LocalDateTime inserted;
 }
