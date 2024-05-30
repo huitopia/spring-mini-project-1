@@ -36,4 +36,8 @@ public class CommentService {
         }
         return true;
     }
+
+    public void deleteById(Integer id) {
+        mapper.deleteById(id);
+    }
 }

@@ -31,4 +31,9 @@ public class CommentController {
     public List<Comment> list(@PathVariable Integer boardId) {
         return service.selectCommentByBoardId(boardId);
     }
+
+    @DeleteMapping("remove")
+    public void remove(@RequestBody Comment comment) {
+        service.deleteById(comment.getId());
+    }
 }
