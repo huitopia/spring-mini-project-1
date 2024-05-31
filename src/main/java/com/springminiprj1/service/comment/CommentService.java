@@ -51,4 +51,8 @@ public class CommentService {
         }
         return true;
     }
+
+    public void updateCommentById(Comment comment) {
+        mapper.updateCommentById(comment);
+    }
 }

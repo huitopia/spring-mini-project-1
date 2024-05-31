@@ -42,4 +42,10 @@ public class CommentController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
+
+    @PutMapping("edit")
+    @PreAuthorize("isAuthenticated()")
+    public void edit(@RequestBody Comment comment, Authentication authentication) {
+        service.updateCommentById(comment);
+    }
 }
