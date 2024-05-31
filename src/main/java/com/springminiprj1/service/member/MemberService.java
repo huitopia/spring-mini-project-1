@@ -4,6 +4,7 @@ package com.springminiprj1.service.member;
 import com.springminiprj1.domain.board.Board;
 import com.springminiprj1.domain.member.Member;
 import com.springminiprj1.mapper.board.BoardMapper;
+import com.springminiprj1.mapper.comment.CommentMapper;
 import com.springminiprj1.mapper.member.MemberMapper;
 import com.springminiprj1.service.board.BoardService;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ public class MemberService {
     final JwtEncoder jwtEncoder;
     private final BoardMapper boardMapper;
     private final BoardService boardService;
+    private final CommentMapper commentMapper;
 
     public void add(Member member) {
         member.setPassword(passwordEncoder.encode(member.getPassword()));
@@ -87,7 +89,8 @@ public class MemberService {
         boardList.forEach(board -> boardService.deleteBoardById(board.getId()));
         // 좋아요 지우기
         boardMapper.deleteLikeByMemberId(id);
-
+        // 댓글 지우기
+        commentMapper.deleteCommentByMemberId(id);
         // member 테이블에서 지우기
         mapper.deleteById(id);
     }
