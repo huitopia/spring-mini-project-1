@@ -40,4 +40,15 @@ public class CommentService {
     public void deleteById(Integer id) {
         mapper.deleteById(id);
     }
+
+    public boolean hasAccess(Comment comment, Authentication authentication) {
+        Comment db = mapper.selectById(comment.getId());
+        if (db == null) {
+            return false;
+        }
+        if (!authentication.getName().equals(db.getMemberId().toString())) {
+            return false;
+        }
+        return true;
+    }
 }
