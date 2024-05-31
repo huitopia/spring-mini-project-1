@@ -3,6 +3,7 @@ package com.springminiprj1.service.board;
 import com.springminiprj1.domain.board.Board;
 import com.springminiprj1.domain.board.BoardFile;
 import com.springminiprj1.mapper.board.BoardMapper;
+import com.springminiprj1.mapper.comment.CommentMapper;
 import com.springminiprj1.mapper.member.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +29,7 @@ public class BoardService {
     private final BoardMapper mapper;
     private final MemberMapper memberMapper;
     final S3Client s3Client;
+    private final CommentMapper commentMapper;
 
     @Value("${aws.s3.bucket.name}")
     String bucketName;
@@ -112,7 +114,7 @@ public class BoardService {
         pageInfo.put("lastPageNumber", lastPageNumber);
         pageInfo.put("leftPageNumber", leftPageNumber);
         pageInfo.put("rightPageNumber", rightPageNumber);
-        
+
         return Map.of(
                 "pageInfo", pageInfo,
                 "boardList", mapper.selectAllPaging(offset, searchType, searchKeyword)
@@ -170,6 +172,9 @@ public class BoardService {
 
         // board file
         mapper.deleteFileByBoardId(id);
+
+        // board comment
+        commentMapper.deleteBoardByBoardId(id);
 
         // board like
         mapper.deleteLikeByBoardId(id);
