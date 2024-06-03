@@ -141,3 +141,12 @@ CREATE TABLE comment
 );
 SELECT *
 FROM comment;
+
+SELECT *
+FROM member;
+
+INSERT INTO authority (member_id, name)
+VALUES (1, 'admin');
+
+SELECT *
+FROM authority;
